@@ -233,7 +233,7 @@ const App = () => {
   
   //  1. Mainly what we did is to extract a function from React's useEffect Hook
   //     commented out above. Instead of using the data fetching logic directly 
-  //     in the side-effect, we made it available as a function for the 
+  //     in the side-effect , we made it available as a function for the 
   //     entire application.
   //     The benefit: reusability. The data fetching can be used by other parts 
   //     of the application by calling this new function. (A)
@@ -261,13 +261,26 @@ const App = () => {
       .catch(() =>
         dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
       );
-  }, [searchTerm]); //E - every time searchTerm changes React.useEffect 
-                    //runs and in turn executes this memoized function (C)
+  }, [searchTerm])
+       const myDependencyArray = JSON.stringify(searchTerm);
+       console.log("dependency array SearchTerm value = " + myDependencyArray);
+        ; //EOF //E - every time searchTerm dependency array (E) changes 
+                    //useCallback Hook creates a memoized function. As a
+                    //result React.useEffect runs again (C) because it depends 
+                    //on the new function (D)
+
+                    //React's useCallback hook changes the function only 
+                    //when one of its values in the dependency array (E) changes. 
+                    //That's when we want to trigger a re-fetch of the data, 
+                    //because the input field has new input and we want to see 
+                    //the new data displayed in our list.
+                    //Note: the dependency array contains the stuff we type in 
+                    //the input field
 
   //useEffect executes every time [searchTerm] dependency array (E) changes.
   //As a result it runs again the memoized function (C) because it depends
   //on the new function "handleFetchStories" (D)
-  React.useEffect(() => {
+  React.useEffect(() => { 
     handleFetchStories(); // C
   }, [handleFetchStories]); // D   (EOF)
 
